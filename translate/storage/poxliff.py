@@ -32,6 +32,7 @@ from translate.misc.multistring import multistring
 from translate.misc.xml_helpers import setXMLspace
 from translate.storage import base, lisa, poheader, xliff
 from translate.storage.placeables import general
+import lxml.etree
 
 plural_id_re = re.compile(r".+\[[123456]\]$")
 
@@ -337,7 +338,7 @@ class PoXliffFile(xliff.xlifffile, poheader.poheader):
             xmlsrc = xml.read()
             xml = xmlsrc
         parser = etree.XMLParser(resolve_entities=False)
-        self.document = etree.fromstring(xml, parser).getroottree()
+        self.document = etree.fromstring(xml, parser, parser=lxml.etree.XMLParser(resolve_entities=False)).getroottree()
         self.initbody()
         root_node = self.document.getroot()
         assert root_node.tag == self.namespaced(self.rootNode)

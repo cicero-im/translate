@@ -22,6 +22,7 @@ from lxml import etree
 
 from translate.misc.xml_helpers import getText, namespaced, reindent, safely_set_text
 from translate.storage import base
+import lxml.etree
 
 
 class FlatXMLUnit(base.TranslationUnit):
@@ -208,7 +209,7 @@ class FlatXMLFile(base.TranslationStore):
             xml = posrc
 
         parser = etree.XMLParser(strip_cdata=False, resolve_entities=False)
-        self.root = etree.fromstring(xml, parser)
+        self.root = etree.fromstring(xml, parser, parser=lxml.etree.XMLParser(resolve_entities=False))
         self.document = self.root.getroottree()
         self.encoding = self.document.docinfo.encoding
 

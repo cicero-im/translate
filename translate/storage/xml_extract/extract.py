@@ -22,6 +22,7 @@ from lxml import etree
 
 from translate.storage.placeables import StringElem, xliff
 from translate.storage.xml_extract import misc, xpath_breadcrumb
+import lxml.etree
 
 
 class Translatable:
@@ -424,7 +425,7 @@ def reverse_map(a_map):
 def build_idml_store(odf_file, store, parse_state, store_adder=None):
     """Build a store for the given IDML file."""
     store_adder = store_adder or _make_store_adder(store)
-    tree = etree.parse(odf_file)
+    tree = etree.parse(odf_file, parser=lxml.etree.XMLParser(resolve_entities=False))
     root = tree.getroot()
     parse_state.nsmap = reverse_map(root.nsmap)
     translatables = find_translatable_dom_nodes(
@@ -437,7 +438,7 @@ def build_idml_store(odf_file, store, parse_state, store_adder=None):
 def build_store(odf_file, store, parse_state, store_adder=None):
     """Build a store for the given XML file."""
     store_adder = store_adder or _make_store_adder(store)
-    tree = etree.parse(odf_file)
+    tree = etree.parse(odf_file, parser=lxml.etree.XMLParser(resolve_entities=False))
     root = tree.getroot()
     parse_state.nsmap = reverse_map(root.nsmap)
     translatables = find_translatable_dom_nodes(root, parse_state)

@@ -31,6 +31,7 @@ from translate.misc.xml_helpers import (
     reindent,
 )
 from translate.storage import base
+import lxml.etree
 
 
 class LISAunit(base.TranslationUnit):
@@ -369,7 +370,7 @@ class LISAfile(base.TranslationStore):
             posrc = xml.read()
             xml = posrc
         parser = etree.XMLParser(strip_cdata=False, resolve_entities=False)
-        self.document = etree.fromstring(xml, parser).getroottree()
+        self.document = etree.fromstring(xml, parser, parser=lxml.etree.XMLParser(resolve_entities=False)).getroottree()
         self.encoding = self.document.docinfo.encoding
         self.initbody()
         assert self.document.getroot().tag == self.namespaced(self.rootNode)
