@@ -20,6 +20,7 @@ import contextlib
 import os
 
 from lxml import etree
+import lxml.etree
 
 __all__ = ("FileExistsInProjectError", "FileNotInProjectError", "ProjectStore")
 
@@ -344,7 +345,7 @@ class ProjectStore:
         inspected.
         """
         settings = {}
-        xml = etree.fromstring(settingsxml)
+        xml = etree.fromstring(settingsxml, parser=lxml.etree.XMLParser(resolve_entities=False))
 
         # Load files in project
         for section in ("sources", "targets", "transfiles"):

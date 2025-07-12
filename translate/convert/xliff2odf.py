@@ -35,6 +35,7 @@ from translate.storage.odf_shared import inline_elements, no_translate_content_e
 from translate.storage.xml_extract.extract import ParseState
 from translate.storage.xml_extract.generate import apply_translations, replace_dom_text
 from translate.storage.xml_extract.unit_tree import XPathTree, build_unit_tree
+import lxml.etree
 
 
 def translate_odf(template, input_file):
@@ -47,7 +48,7 @@ def translate_odf(template, input_file):
         """
         odf_data = open_odf(template)
         return {
-            filename: etree.parse(BytesIO(data)) for filename, data in odf_data.items()
+            filename: etree.parse(BytesIO(data), parser=lxml.etree.XMLParser(resolve_entities=False)) for filename, data in odf_data.items()
         }
 
     def load_unit_tree(input_file):

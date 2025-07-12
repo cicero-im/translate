@@ -38,6 +38,7 @@ from translate.storage.idml import (
 from translate.storage.xml_extract.extract import ParseState, process_idml_translatable
 from translate.storage.xml_extract.generate import apply_translations, replace_dom_text
 from translate.storage.xml_extract.unit_tree import XPathTree, build_unit_tree
+import lxml.etree
 
 
 def translate_idml(template, input_file, translatable_files):
@@ -51,7 +52,7 @@ def translate_idml(template, input_file, translatable_files):
         idml_data = open_idml(template)
         parser = etree.XMLParser(strip_cdata=False, resolve_entities=False)
         return {
-            filename: etree.fromstring(data, parser).getroottree()
+            filename: etree.fromstring(data, parser, parser=lxml.etree.XMLParser(resolve_entities=False)).getroottree()
             for filename, data in idml_data.items()
         }
 
@@ -116,7 +117,7 @@ def translate_idml(template, input_file, translatable_files):
                 fake_string = "<whatever>" + string + "</whatever>"
 
                 # Copy the children to the XLIFF unit's source or target node.
-                fake_node = etree.fromstring(fake_string)
+                fake_node = etree.fromstring(fake_string, parser=lxml.etree.XMLParser(resolve_entities=False))
                 node.extend(fake_node.getchildren())
 
                 return node

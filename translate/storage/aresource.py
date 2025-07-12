@@ -31,6 +31,7 @@ from lxml import etree
 from translate.lang import data
 from translate.misc.multistring import multistring
 from translate.storage import base, lisa
+import lxml.etree
 
 WHITESPACE = {" ", "\n", "\t"}  # Whitespace that we collapse.
 ESCAPE_NEWLINE = {"n", "N"}
@@ -366,14 +367,14 @@ class AndroidResourceUnit(base.TranslationUnit):
                 f"<{xmltarget.tag}>{target}</{xmltarget.tag}></resources>",
             )
             try:
-                etree.fromstring(newstring, parser)
+                etree.fromstring(newstring, parser, parser=lxml.etree.XMLParser(resolve_entities=False))
             except Exception:
                 self.set_xml_text_plain(target, xmltarget)
             else:
                 # Escape text parts
                 encoding_parser = EncodingXMLParser(newstring)
                 newstring = encoding_parser.parse()
-                newtree = etree.fromstring(newstring, parser)[0]
+                newtree = etree.fromstring(newstring, parser, parser=lxml.etree.XMLParser(resolve_entities=False))[0]
                 # Copy existing attributes
                 for attribute, value in xmltarget.items():
                     newtree.attrib[attribute] = value
@@ -530,7 +531,7 @@ class AndroidResourceFile(lisa.LISAfile):
             posrc = xml.read()
             xml = posrc
         parser = etree.XMLParser(strip_cdata=False, resolve_entities=False)
-        self.document = etree.fromstring(xml, parser).getroottree()
+        self.document = etree.fromstring(xml, parser, parser=lxml.etree.XMLParser(resolve_entities=False)).getroottree()
         self._encoding = self.document.docinfo.encoding
         self.initbody()
         assert self.document.getroot().tag == self.namespaced(self.rootNode)

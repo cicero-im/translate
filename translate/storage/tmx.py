@@ -23,6 +23,7 @@ from lxml import etree
 from translate import __version__
 from translate.misc.xml_helpers import safely_set_text, setXMLlang
 from translate.storage import lisa
+import lxml.etree
 
 
 class tmxunit(lisa.LISAunit):
@@ -111,7 +112,7 @@ class tmxunit(lisa.LISAunit):
         """
         # TODO: check performance
         new_unit = self.__class__(None, empty=True)
-        new_unit.xmlelement = etree.fromstring(etree.tostring(self.xmlelement))
+        new_unit.xmlelement = etree.fromstring(etree.tostring(self.xmlelement), parser=lxml.etree.XMLParser(resolve_entities=False))
         return new_unit
 
 
